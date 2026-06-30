@@ -522,8 +522,8 @@ async function signOut() {
 
 // File upload functions
 function handleFileSelect(file) {
-    if (!file.name.endsWith('.hsiext')) {
-        alert('Please select a .hsiext file');
+    if (!file.name.endsWith('.hsiext') && !file.name.endsWith('.hsixet')) {
+        alert('Please select a .hsiext or .hsixet file');
         return;
     }
     
