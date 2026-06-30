@@ -17,7 +17,7 @@
                     <path d="M4 9L28 23" stroke="#fff" stroke-width="2"/>
                     <path d="M28 9L4 23" stroke="#fff" stroke-width="2"/>
                 </svg>
-                <span class="logo-text">NexCode</span>
+                <span class="logo-text">NexCode Extension Marketplace</span>
             </div>
             <nav class="nav-tabs">
                 <a href="#" class="nav-tab active">NexCode</a>
@@ -155,6 +155,94 @@
                     <span id="authSwitchText">Don't have an account?</span>
                     <a href="#" id="authSwitchBtn">Sign Up</a>
                 </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <button class="modal-close" id="profileModalClose">&times;</button>
+            <div class="modal-body">
+                <h2 class="modal-title">User Profile</h2>
+                
+                <div class="profile-section">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profileAvatar">
+                            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                                <circle cx="40" cy="40" r="40" fill="#007acc"/>
+                                <circle cx="40" cy="30" r="12" fill="white"/>
+                                <path d="M20 65C20 50 28 42 40 42C52 42 60 50 60 65V68H20V65Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="profile-info">
+                            <h3 class="profile-username" id="profileUsername">@username</h3>
+                            <p class="profile-display-name" id="profileDisplayName">Display Name</p>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <div class="profile-field">
+                            <label>Bio</label>
+                            <p id="profileBio">No bio yet</p>
+                        </div>
+                        
+                        <div class="profile-field">
+                            <label>Website</label>
+                            <a href="#" id="profileWebsite" target="_blank">Not set</a>
+                        </div>
+                        
+                        <div class="profile-field">
+                            <label>GitHub</label>
+                            <a href="#" id="profileGithub" target="_blank">Not set</a>
+                        </div>
+                        
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-value" id="profileExtensions">0</span>
+                                <span class="stat-label">Extensions</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="profileJoined">-</span>
+                                <span class="stat-label">Joined</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-edit-profile" id="editProfileBtn">Edit Profile</button>
+                </div>
+                
+                <div class="profile-edit-form" id="profileEditForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="editUsername">Username *</label>
+                        <input type="text" id="editUsername" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editDisplayName">Display Name *</label>
+                        <input type="text" id="editDisplayName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editBio">Bio</label>
+                        <textarea id="editBio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editWebsite">Website</label>
+                        <input type="url" id="editWebsite" placeholder="https://example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editGithub">GitHub URL</label>
+                        <input type="url" id="editGithub" placeholder="https://github.com/username">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn-cancel" id="cancelEditBtn">Cancel</button>
+                        <button class="btn-submit" id="saveProfileBtn">Save Changes</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

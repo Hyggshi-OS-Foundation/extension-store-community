@@ -647,6 +647,116 @@ function closeAuthModal() {
     document.body.style.overflow = 'auto';
 }
 
+function openProfileModal() {
+    if (!currentUser) {
+        alert('Please sign in to view profile');
+        return;
+    }
+    loadProfile();
+    document.getElementById('profileModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+// Profile functions
+async function loadProfile() {
+    if (!currentUser || !window.supabaseClient) return;
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
+
+        if (error && error.code !== 'PGRST116') {
+            console.error('Error loading profile:', error);
+            return;
+        }
+
+        if (data) {
+            document.getElementById('profileUsername').textContent = '@' + data.username;
+            document.getElementById('profileDisplayName').textContent = data.display_name || 'No display name';
+            document.getElementById('profileBio').textContent = data.bio || 'No bio yet';
+            document.getElementById('profileWebsite').textContent = data.website || 'Not set';
+            document.getElementById('profileWebsite').href = data.website || '#';
+            document.getElementById('profileGithub').textContent = data.github_url || 'Not set';
+            document.getElementById('profileGithub').href = data.github_url || '#';
+            
+            // Get extension count
+            const { count } = await window.supabaseClient
+                .from('extensions')
+                .select('*', { count: 'exact', head: true })
+                .eq('author', currentUser.email);
+            
+            document.getElementById('profileExtensions').textContent = count || 0;
+            document.getElementById('profileJoined').textContent = new Date(data.created_at).toLocaleDateString();
+        }
+    } catch (error) {
+        console.error('Failed to load profile:', error);
+    }
+}
+
+async function saveProfile() {
+    if (!currentUser || !window.supabaseClient) return;
+
+    const username = document.getElementById('editUsername').value;
+    const displayName = document.getElementById('editDisplayName').value;
+    const bio = document.getElementById('editBio').value;
+    const website = document.getElementById('editWebsite').value;
+    const githubUrl = document.getElementById('editGithub').value;
+
+    if (!username || !displayName) {
+        alert('Username and display name are required');
+        return;
+    }
+
+    try {
+        const { error } = await window.supabaseClient
+            .from('profiles')
+            .upsert({
+                id: currentUser.id,
+                username: username,
+                display_name: displayName,
+                bio: bio,
+                website: website,
+                github_url: githubUrl,
+                updated_at: new Date().toISOString()
+            });
+
+        if (error) throw error;
+
+        alert('Profile updated successfully!');
+        loadProfile();
+        document.getElementById('profileEditForm').style.display = 'none';
+        document.querySelector('.profile-section').style.display = 'flex';
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        alert('Failed to save profile: ' + error.message);
+    }
+}
+
+function showEditForm() {
+    document.querySelector('.profile-section').style.display = 'none';
+    document.getElementById('profileEditForm').style.display = 'flex';
+    
+    // Pre-fill form with current data
+    document.getElementById('editUsername').value = document.getElementById('profileUsername').textContent.replace('@', '');
+    document.getElementById('editDisplayName').value = document.getElementById('profileDisplayName').textContent;
+    document.getElementById('editBio').value = document.getElementById('profileBio').textContent === 'No bio yet' ? '' : document.getElementById('profileBio').textContent;
+    document.getElementById('editWebsite').value = document.getElementById('profileWebsite').href === '#' ? '' : document.getElementById('profileWebsite').href;
+    document.getElementById('editGithub').value = document.getElementById('profileGithub').href === '#' ? '' : document.getElementById('profileGithub').href;
+}
+
+function hideEditForm() {
+    document.getElementById('profileEditForm').style.display = 'none';
+    document.querySelector('.profile-section').style.display = 'flex';
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     // Fetch extensions
@@ -684,6 +794,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('signInBtn').addEventListener('click', openAuthModal);
     document.getElementById('signOutBtn').addEventListener('click', signOut);
     document.getElementById('uploadBtn').addEventListener('click', openUploadModal);
+    
+    // Profile button
+    const userEmailEl = document.getElementById('userEmail');
+    if (userEmailEl) {
+        userEmailEl.style.cursor = 'pointer';
+        userEmailEl.addEventListener('click', openProfileModal);
+        userEmailEl.title = 'View Profile';
+    }
+    
+    // Profile modal buttons
+    document.getElementById('profileModalClose').addEventListener('click', closeProfileModal);
+    document.getElementById('editProfileBtn').addEventListener('click', showEditForm);
+    document.getElementById('cancelEditBtn').addEventListener('click', hideEditForm);
+    document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+    
+    // Close profile modal on background click
+    document.getElementById('profileModal').addEventListener('click', (e) => {
+        if (e.target.id === 'profileModal') closeProfileModal();
+    });
     
     // Auth form submission
     let isSignUp = false;
